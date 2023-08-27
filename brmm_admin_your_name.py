@@ -66,6 +66,27 @@ def list_juniors_by_age():
     col_juniors = {'Driver ID': int, 'Driver Name': str, 'Age': str, 'Caregiver Name': str}
 
     # Complete the function
+    # task-2
+    db_juniors = []
+    for driver in db_drivers.keys():
+        # Junior drivers are identified by a 'J'
+        if db_drivers[driver][2] == 'J':
+            # if driver is a junior and aged 12-16, find the caregiver's name
+            if db_drivers[driver][3] >= 12 and db_drivers[driver][3] <= 16:
+                caregiver_name = db_drivers[db_drivers[driver][4]][0] + ' ' + db_drivers[db_drivers[driver][4]][1]
+            else:
+                caregiver_name = 'None'    
+            # append the junior driver's details to the list      
+            db_juniors.append((driver,
+                               db_drivers[driver][0] + ' ' + db_drivers[driver][1],
+                               db_drivers[driver][3],
+                               caregiver_name))
+    # sort the list by age
+    db_juniors.sort(key=lambda x: x[2])
+    # print out the list
+    print('==================== JUNIOR DRIVER LIST ====================')
+    column_output(db_juniors, col_juniors, "{: <9}  {: <16}  {: <5}  {: <16}")
+    print('==================== ****************** ====================')
 
 
 def list_runs():
