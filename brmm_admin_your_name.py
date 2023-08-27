@@ -84,9 +84,10 @@ def list_juniors_by_age():
     # sort the list by age
     db_juniors.sort(key=lambda x: x[2])
     # print out the list
-    print('==================== JUNIOR DRIVER LIST ====================')
-    column_output(db_juniors, col_juniors, "{: <9}  {: <16}  {: <5}  {: <16}")
-    print('==================== ****************** ====================')
+    format_columns = "{: <9}  {: <16}  {: <5}  {: <16}"
+    print("\nJUNIOR DRIVER LIST\n")    # display a heading for the output
+    column_output(db_juniors, col_juniors, format_columns)
+    input("\nPress Enter to continue.")
 
 
 def list_runs():
@@ -126,9 +127,9 @@ def list_runs():
     runs_result.sort(key=lambda x: (x[1], x[-1]))
     # print out the list
     runs_format = "{: >6} {: ^6} {: <16} | {: <6} {: ^9} {: ^9} | {: <6}"
-    print('============================ RUN LIST ============================')
+    print("\nRUNS LIST\n")
     column_output(runs_result, col_runs, runs_format)
-    print('============================ ******** ============================')
+    input("\nPress Enter to continue.")
 
 def edit_run_results():
     # Display list of runs. Make use of your existing function.
