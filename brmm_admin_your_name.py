@@ -136,8 +136,98 @@ def edit_run_results():
     # Then allow the user to enter a run ID (limited to existing runs), and to update the run data.
     # Add validation so times are in a sensible range, and WD is restricted to 1 or 0.
 
-    pass  # REMOVE this line once you have some function code
+    # Check existing runs
+    list_runs()
+    # Ask user to enter a run ID
+    while True:
+        input_run_id = input("\nEnter a run ID to update: ")
+        try:
+            input_run_id = int(input_run_id)
+                
+            if not isinstance(input_run_id, int):
+                print("Error: The input is not an integer.")
+            elif not input_run_id in db_runs.keys():
+                print("Error: The input is not an existing run ID.")
+            else:
+                break  # Exit the loop if a valid run time is entered
+        except ValueError:
+            print("Error: Invalid input. Please enter a valid run ID.")
+    
 
+    def display_single_run(run_id):
+        # Display the run details
+        print("\nRun ID: ", run_id)
+        print("Course: ", db_runs[run_id][0])
+        print("Driver info: ", str(db_runs[run_id][1]) + ' - ' + db_drivers[db_runs[run_id][1]][0] + ' ' + db_drivers[db_runs[run_id][1]][1])
+        print("Time: ", db_runs[run_id][2])
+        print("Cones hit: ", db_runs[run_id][3])
+        print("WD status: ", db_runs[run_id][4])
+
+    # Check if the run ID exists
+    # Display the run details
+    display_single_run(input_run_id)
+
+    # Ask user to update the run details
+    # receive input for run time
+    while True:
+        input_run_time = input("\nEnter the new run time: ")
+        try:
+            # Attempt to convert the input to a float number
+            input_run_time = float(input_run_time)
+            
+            # Check if the input is an integer
+            if not isinstance(input_run_time, float):
+                print("Error: The input is not a number.")
+            elif input_run_time < 0 or input_run_time > 9999:
+                print("Error: The input is not in a sensible range for time.")
+            else:
+                break  # Exit the loop if a valid run time is entered
+        except ValueError:
+            print("Error: Invalid input. Please enter a valid time.")
+
+    # receive input for cones hit
+    while True:
+        input_cones_hit = input("Enter the new cones hit: ") or "0"
+        try:
+            # Attempt to convert the input to an integer
+            input_cones_hit = int(input_cones_hit)
+            
+            # Check if the input is an integer
+            if not isinstance(input_cones_hit, int):
+                print("The input is not an integer.")
+            elif input_cones_hit < 0 or input_cones_hit > 50:
+                print("The input is not in a sensible range for cones hit.")
+            elif input_cones_hit == 0:
+                print("0 entered automatically as no value is entered.")
+            else: 
+                break  # Exit the loop if a valid cones hit is entered
+        except ValueError:
+            print("Invalid input. Please enter a valid integer.")
+
+    # receive input for WD status
+    input_wd_status = input("Type \'wd' to enter a wrong direction: ")
+    if input_wd_status.upper() == "WD":
+        input_wd_status = 1
+    else:
+        print("Invalid input or no input. WD status is set to 0.")
+        input_wd_status = 0
+
+    # Update the run details
+    db_runs[input_run_id] = (db_runs[input_run_id][0],
+                                db_runs[input_run_id][1],
+                                input_run_time,
+                                input_cones_hit,
+                                input_wd_status)
+    print("\nRun updated successfully, please check the updated run details: ")
+    # Display the updated run details
+    display_single_run(input_run_id)
+
+    # Ask user if they want to update another run
+    next_step = input("\nPress \'Y\' to update another run, or enter any key to back to the menu: ")
+    if next_step.upper() == "Y":
+        edit_run_results()
+    else:
+        pass
 
 def display_final_results():
     # Calculate and display the overall results.
