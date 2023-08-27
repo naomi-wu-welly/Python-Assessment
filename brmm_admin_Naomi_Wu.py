@@ -295,8 +295,34 @@ def display_cone_graph():
     # List any drivers who hit cones, along with their total numbers of cones as a repeating symbol or character.
     # Do not list any drivers who did not hit any cones.
     
+    col_graph_list = {'Driver Name': str, 'Cones Hit': str}
+    # Find drivers whoever hits cones
+    drivers_list = []
+    for run in db_runs.keys():
+        if db_runs[run][3] is not None and db_runs[run][3] > 0:
+            drivers_list.append(db_runs[run][1])
+    # Remove duplicate drivers
+    drivers_list = list(set(drivers_list))
 
-    pass  # REMOVE this line once you have some function code
+    # Print out the list
+    display_list = []
+    print("\nCONES HIT GRAPH\n")
+    for driver in drivers_list:
+        # Driver name
+        driver_name = db_drivers[driver][0] + ' ' + db_drivers[driver][1]
+        cones_hit = 0
+        for run in db_runs.keys():
+            # if the driver hits cones, add the cones hit to the total cones hit
+            if db_runs[run][1] == driver and db_runs[run][3] is not None and db_runs[run][3] > 0:
+                cones_hit += db_runs[run][3]
+        # Print out the driver's name and cones hit
+        # a ▲  stands for a cone hit, and ▲ ▲ stands for 2 cone hits, etc...
+        display_list.append((driver_name,
+                             '▲ ' * cones_hit))
+    format_columns = "{: <20} {: <20}"
+    column_output(display_list, col_graph_list, format_columns)   # An example of how to call column_output function
+
+    input("\nPress Enter to continue.")
 
 
 # function to display the menu
