@@ -92,9 +92,43 @@ def list_juniors_by_age():
 def list_runs():
     # Print a list of runs, including the Run Totals.
     # Display in Course order A B C and within that by time (fastest A first, to slowest C last).
-
-    pass  # REMOVE this line once you have some function code (a function must have one line of code, so this temporary line keeps Python happy so you can run the code)
-
+    # column headings
+    col_runs = {'Run ID': int, 'Course': str, 'Driver': str, 'Time': str, 'Cones hit': str, 'WD status': str, 'Run Total time': str}
+    runs_result = []
+    for run in db_runs.keys():
+        # Driver name
+        driver_name = db_drivers[db_runs[run][1]][0] + ' ' + db_drivers[db_runs[run][1]][1]
+        # Time
+        if db_runs[run][2] is None or db_runs[run][2] < 0:
+            run_time = int(0)
+        else:
+            run_time = float(db_runs[run][2])
+        # Cones hit
+        if db_runs[run][3] is None or db_runs[run][3] < 0:
+            cones_hit = int(0)
+        else:
+            cones_hit = int(db_runs[run][3])
+        # WD status
+        if db_runs[run][4] is None or db_runs[run][4] < 0:
+            wd_status = int(0)
+        else:
+            wd_status = int(db_runs[run][4])
+        run_total_time = float(run_time + 5 * cones_hit + 10 * wd_status)
+        runs_result.append((run,                        # Run ID
+                            db_runs[run][0],            # Course
+                            driver_name,                # Driver name
+                            run_time,                   # Time
+                            cones_hit,                  # Cones hit
+                            wd_status,                  # WD status
+                            run_total_time))            # Run Total time
+    
+    # sort by course asc, then by run_total_time asc
+    runs_result.sort(key=lambda x: (x[1], x[-1]))
+    # print out the list
+    runs_format = "{: >6} {: ^6} {: <16} | {: <6} {: ^9} {: ^9} | {: <6}"
+    print('============================ RUN LIST ============================')
+    column_output(runs_result, col_runs, runs_format)
+    print('============================ ******** ============================')
 
 def edit_run_results():
     # Display list of runs. Make use of your existing function.
