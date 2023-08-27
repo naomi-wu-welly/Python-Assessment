@@ -240,7 +240,56 @@ def display_final_results():
     col_final_results = {'Driver': int, 'Driver Name': str, 'Result': str}
 
     # Complete the function
+    # task-5
+    # calculate the result for each driver
+    driver_list = []
+    driver_hag = []
+    for driver in db_drivers.keys():
+        # Driver name
+        driver_name = db_drivers[driver][0] + ' ' + db_drivers[driver][1]
+        if db_drivers[driver][2] == 'J':
+            driver_name = driver_name + ' (J)'
 
+        # Driver result
+        # show the sum of driver's best 2 runs
+        driver_result = 0
+        # get the driver's best 2 runs
+        driver_runs = []
+        for run in db_runs.keys():
+            if db_runs[run][1] == driver:
+                if db_runs[run][2] is not None and db_runs[run][2] >= 0:
+                    driver_runs.append(db_runs[run][2])
+        if len(driver_runs) >= 2:
+            # sort the driver's runs from fastest to slowest
+            driver_runs.sort()
+            # get the sum of the driver's best 2 runs
+            driver_result = driver_runs[0] + driver_runs[1]
+        elif len(driver_runs) < 2:
+            driver_result = 'HAG'
+        else:
+            print("Error: The driver has no proper record for runs.")
+
+        if driver_result == 'HAG':
+            # append the driver's details to another list
+            driver_hag.append((driver,
+                               driver_name,
+                               driver_result))
+        else:
+            # append the driver's details to the list      
+            driver_list.append((driver,
+                                driver_name,
+                                driver_result))
+    # sort the driver list by result
+    driver_list.sort(key=lambda x: x[-1])
+    # sort the hag list by driver id
+    driver_hag.sort(key=lambda x: x[0])
+    # combine the two lists
+    final_results = driver_list + driver_hag
+    # print out the list
+    format_columns = "{: <6}  {: <20}  {: <6}"
+    print("\nOVERALL RESULT\n")    # display a heading for the output
+    column_output(final_results, col_final_results, format_columns)
+    input("\nPress Enter to continue.")
 
 def display_cone_graph():
     # List any drivers who hit cones, along with their total numbers of cones as a repeating symbol or character.
