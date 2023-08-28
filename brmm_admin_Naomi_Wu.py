@@ -75,7 +75,7 @@ def list_juniors_by_age():
             if db_drivers[driver][3] >= 12 and db_drivers[driver][3] <= 16:
                 caregiver_name = db_drivers[db_drivers[driver][4]][0] + ' ' + db_drivers[db_drivers[driver][4]][1]
             else:
-                caregiver_name = 'None'    
+                caregiver_name = None
             # append the junior driver's details to the list      
             db_juniors.append((driver,
                                db_drivers[driver][0] + ' ' + db_drivers[driver][1],
@@ -84,11 +84,10 @@ def list_juniors_by_age():
     # sort the list by age
     db_juniors.sort(key=lambda x: x[2])
     # print out the list
-    format_columns = "{: <9}  {: <16}  {: <5}  {: <16}"
+    format_columns = "{: ^9}  {: <24}  {: ^5}  {: <24}"
     print("\nJUNIOR DRIVER LIST\n")    # display a heading for the output
     column_output(db_juniors, col_juniors, format_columns)
     input("\nPress Enter to continue.")
-
 
 def list_runs():
     # Print a list of runs, including the Run Totals.
@@ -100,33 +99,39 @@ def list_runs():
         # Driver name
         driver_name = db_drivers[db_runs[run][1]][0] + ' ' + db_drivers[db_runs[run][1]][1]
         # Time
-        if db_runs[run][2] is None or db_runs[run][2] < 0:
-            run_time = int(0)
+        run_time = db_runs[run][2]
+        if run_time is None or run_time < 0:
+            run_time = 0
         else:
             run_time = float(db_runs[run][2])
         # Cones hit
-        if db_runs[run][3] is None or db_runs[run][3] < 0:
-            cones_hit = int(0)
+        cones_hit = db_runs[run][3]
+        if cones_hit is None or cones_hit < 0:
+            cones_hit = 0
         else:
             cones_hit = int(db_runs[run][3])
         # WD status
-        if db_runs[run][4] is None or db_runs[run][4] < 0:
-            wd_status = int(0)
+        wd_status = db_runs[run][4]
+        if wd_status is None or wd_status < 0 or db_runs[run][4] > 1:
+            wd_status = 0
         else:
             wd_status = int(db_runs[run][4])
+        # Run Total time
         run_total_time = float(run_time + 5 * cones_hit + 10 * wd_status)
+        if run_total_time == 0:
+            run_total_time = None
         runs_result.append((run,                        # Run ID
                             db_runs[run][0],            # Course
                             driver_name,                # Driver name
-                            run_time,                   # Time
-                            cones_hit,                  # Cones hit
-                            wd_status,                  # WD status
+                            db_runs[run][2],            # Time
+                            db_runs[run][3],            # Cones hit
+                            db_runs[run][4],            # WD status
                             run_total_time))            # Run Total time
     
     # sort by course asc, then by run_total_time asc
-    runs_result.sort(key=lambda x: (x[1], x[-1]))
+    runs_result.sort(key=lambda x: (x[1], x[-1]) if x[-1] is not None else (x[1], 9999))
     # print out the list
-    runs_format = "{: >6} {: ^6} {: <16} | {: <6} {: ^9} {: ^9} | {: <6}"
+    runs_format = "{: >6} {: ^6} {: <24} |  {: <6} {: ^9}   {: ^9} | {: <6}"
     print("\nRUNS LIST\n")
     column_output(runs_result, col_runs, runs_format)
     input("\nPress Enter to continue.")
@@ -204,13 +209,15 @@ def edit_run_results():
             print("Invalid input. Please enter a valid integer.")
 
     # receive input for WD status
-    input_wd_status = input("Type \'wd' to enter a wrong direction: ")
+    input_wd_status = input("Type \'wd\' to enter a wrong direction, type \'rm\' to remove a wrong direction, or enter any key to skip: ")
     # case is not sensitive
     if input_wd_status.upper() == "WD":
         input_wd_status = 1
-    else:
-        print("Invalid input or no input. WD status is set to 0.")
+    elif input_wd_status.upper() == "RM":
         input_wd_status = 0
+    else:
+        input_wd_status = db_runs[input_run_id][4]
+        print("Invalid input or no input, WD status is still be: " + str(input_wd_status))
 
     # Update the run details
     db_runs[input_run_id] = (db_runs[input_run_id][0],
@@ -286,7 +293,7 @@ def display_final_results():
     # combine the two lists
     final_results = driver_list + driver_hag
     # print out the list
-    format_columns = "{: <6}  {: <20}  {: <6}"
+    format_columns = "{: <6}  {: <24}  {: <6}"
     print("\nOVERALL RESULT\n")    # display a heading for the output
     column_output(final_results, col_final_results, format_columns)
     input("\nPress Enter to continue.")
@@ -319,7 +326,7 @@ def display_cone_graph():
         # a ▲  stands for a cone hit, and ▲ ▲ stands for 2 cone hits, etc...
         display_list.append((driver_name,
                              '▲ ' * cones_hit))
-    format_columns = "{: <20} {: <20}"
+    format_columns = "{: <24} {: <24}"
     column_output(display_list, col_graph_list, format_columns)   # An example of how to call column_output function
 
     input("\nPress Enter to continue.")
